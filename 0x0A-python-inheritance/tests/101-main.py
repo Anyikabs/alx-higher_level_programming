@@ -1,10 +1,16 @@
 #!/usr/bin/python3
-LockedClass = __import__('101-locked_class').LockedClass
+add_attribute = __import__('101-add_attribute').add_attribute
 
-lc = LockedClass()
-lc.first_name = "John"
+class MyClass():
+    pass
+
+mc = MyClass()
+add_attribute(mc, "name", "John")
+print(mc.name)
+
 try:
-    lc.last_name = "Snow"
+    a = "My String"
+    add_attribute(a, "name", "Bob")
+    print(a.name)
 except Exception as e:
     print("[{}] {}".format(e.__class__.__name__, e))
-
