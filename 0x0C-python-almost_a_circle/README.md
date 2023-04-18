@@ -1,111 +1,134 @@
-# Python - Input/Output
+# Python - Almost a circle
 
-In this project, I practiced file handling in Python. I used the builtin `with`,
-`open`, and `read` functions with the `json` module to read and write files and
-serialize and deserialize objects with JSON.
+In this project, I encapsulated skills in Python object-oriented programming
+by coding three connected classes to represent rectangles and squares. I wrote my
+own test suite using the `unittest` module to test all functionality for each
+class.
+
+The three classes involved utilizing the following Python tools:
+* Import
+* Exceptions
+* Private attributes
+* Getter/setter
+* Class/static methods
+* Inheritance
+* File I/O
+* `args` / `kwargs`
+* JSON and CSV serialization/deserialization
+* Unittesting
 
 ## Tests :heavy_check_mark:
 
-* [tests](./tests): Folder of test files. Provided by ALX.
+* [tests/test_models](./tests/test_models): Folder containing the following
+independently-developed test files:
+  * [test_base.py](./tests/test_models/test_base.py)
+  * [test_rectangle.py](./tests/test_models/test_rectangle.py)
+  * [test_square.py](./tests/test_models/test_square.py)
 
-## Function Prototypes :floppy_disk:
+## Classes :cl:
 
-Prototypes for functions written in this project:
+### Base
+Represents the "base" class for all other classes in the project. Includes:
 
-| File        | Prototype               |
-| ----------- | ----------------------- |
-| `0-read_file.py` | `def read_file(filename=""):` |
-| `1-number_of_lines.py` | `def number_of_lines(filename=""):` |
-| `2-read_lines.py` | `def read_lines(filename="", nb_lines=0):` |
-| `3-write_file.py` | `def write_file(filename="", text=""):` |
-| `4-append_write.py` | `def append_write(filename="", text=""):` |
-| `5-to_json_string.py` | `def to_json_string(my_obj):` |
-| `6-from_json_string.py` | `def from_json_string(my_str):` |
-| `7-save_to_json_file.py` | `def save_to_json_file(my_obj, filename):` |
-| `8-load_from_json_file.py` | `def load_from_json_file(filename):` |
-| `10-class_to_json.py` | `def class_to_json(obj):` |
-| `14-pascal_triangle.py` | `def pascal_triangle(n):` |
-| `100-append_after.py` | `def append_after(filename="", search_string="", new_string=""):` |
+* Private class attribute `__nb_objects = 0`.
+* Public instance attribute `id`.
+* Class constructor `def __init__(self, id=None):`
+  * If `id` is `None`, increments `__nb_objects` and assigns its value to the
+  public instance attribute `id`.
+  * Otherwise, sets the public instance attribute `id` to the provided `id`.
+* Static method `def to_json_string(list_dictionaries):` that returns the JSON
+string serialization of a list of dictionaries.
+  * If `list_dictionaries` is `None` or empty, returns the string `"[]"`.
+* Class method `def save_to_file(cls, list_objs):` that writes the JSON
+serialization of a list of objects to a file.
+  * The parameter `list_objs` is expected to be a list of `Base`-inherited
+  instances.
+  * If `list_objs` is `None`, the function saves an empty list.
+  * The file is saved with the name `<cls name>.json` (ie. `Rectangle.json`)
+  * Overwrites the file if it already exists.
+* Static method `def from_json_string(json_string):` that returns a list of
+objects deserialized from a JSON string.
+  * The parameter `json_string` is expected to be a string representing a
+  list of dictionaries.
+  * If `json_string` is `None` or empty, the function returns an empty list.
+* Class method `def create(cls, **dictionary):` that instantiates an object with
+provided attributes.
+  * Instantiates an object with the attributes given in `**dictionary`.
+* Class method `def load_from_file(cls):` that returns a list of objects
+instantiated from a JSON file.
+  * Reads from the JSON file `<cls name>.json` (ie. `Rectangle.json`)
+  * If the file does not exist, the function returns an empty list.
+* Class method `def save_to_file_csv(cls, list_objs):` that writes the CSV
+serialization of a list of objects to a file.
+  * The parameter `list_objs` is expected to be a list of `Base`-inherited
+  instances.
+  * If `list_objs` is `None`, the function saves an empty list.
+  * The file is saved with the name `<cls name>.csv` (ie. `Rectangle.csv`)
+  * Serializes objects in the format `<id>,<width>,<height>,<x>,<y>` for
+  `Rectangle` objects and `<id>,<size>,<x>,<y>` for `Square` objects.
+* Class method `def load_from_file_csv(cls):` that returns a list of objects
+instantiated from a CSV file.
+  * Reads from the CSV file `<cls name>.csv` (ie. `Rectangle.csv`)
+  * If the file does not exist, the function returns an empty list.
+* Static method `def draw(list_rectangles, list_squares):` that draws
+`Rectangle` and `Square` instances in a GUI window using the `turtle` module.
+  * The parameter `list_rectangles` is expected to be a list of `Rectangle`
+  objects to print.
+  * The parameter `list_squares` is expected to be a list of `Square` objects
+  to print.
 
-## Tasks :page_with_curl:
+### Rectangle
 
-* **0. Read file**
-  * [0-read_file.py](./0-read_file.py): Python function that prints the contents of a UTF8 text
-  file to standard output.
+Represents a rectangle. Inherits from `Base` with:
 
-* **1. Write to a file**
-  * [1-write_file.py](./1-write_file.py): Python function that writes a string to a UTF8 text
-  file and returns the number of characters written.
+* Private instance attributes `__width`, `__height`, `__x`, and `__y`.
+  * Each private instance attribute features its own getter/setter.
+* Class constructor `def __init__(self, width, height, x=0, y=0, id=None):`
+  * If either of `width`, `height`, `x`, or `y` is not an integer, raises a
+  `TypeError` exception with the message `<attribute> must be an integer`.
+  * If either of `width` or `height` is >= 0, raises a `ValueError` exception
+  with the message `<attribute> must be > 0`.
+  * If either of `x` or `y` is less than 0, raises a `ValueError` exception
+  with the message `<attribute> must be >= 0`.
+* Public method `def area(self):` that returns the area of the `Rectangle`
+instance.
+* Public method `def display(self):` that prints the `Rectangle` instance to
+`stdout` using the `#` character.
+  * Prints new lines for the `y` coordinate and spaces for the `x` coordinate.
+* Overwrite of `__str__` method to print a `Rectangle` instance in the format
+`[Rectangle] (<id>) <x>/<y>`.
+* Public method `def update(self, *args, **kwargs):` that updates an instance
+of a `Rectangle` with the given attributes.
+  * `*args` must be supplied in the following order:
+    * 1st: `id`
+    * 2nd: `width`
+    * 3rd: `height`
+    * 4th: `x`
+    * 5th: `y`
+  * `**kwargs` is expected to be a double pointer to a dictionary of new
+  key/value attributes to update the `Rectangle` with.
+  * `**kwargs` is skipped if `*args` exists.
+* Public method `def to_dictionary(self):` that returns the dictionary
+representation of a `Rectangle` instance.
 
-* **2. Append to a file**
-  * [2-append_write.py](./2-append_write.py): Python function that appends a string to the end of a
-  UTF8 text file and returns the number of characters appended.
+### Square
 
-* **3. To JSON string**
-  * [3-to_json_string.py](./3-to_json_string.py): Python function that returns the JSON string
-  representation of an object.
+Represents a square. Inherits from `Rectangle` with:
 
-* **4. From JSON string to Object**
-  * [4-from_json_string.py](./4-from_json_string.py): Python function that returns the Python object
-  represented by a JSON string.
-
-* **5. Save Object to a file**
-  * [5-save_to_json_file.py](./5-save_to_json_file.py): Python function that writes an object to a text
-  file using JSON representation.
-
-* **6. Create object from a JSON file**
-  * [6-load_from_json_file.py](./6-load_from_json_file.py): Python function that creates an object from a
-  `.json` file.
-
-* **7. Load, add, save**
-  * [7-add_item.py](./7-add_item.py): Python script that stores all command line arguments to a
-  Python list saved in the file `add_item.json`.
-
-* **8. Class to JSON**
-  * [8-class_to_json.py](./8-class_to_json.py): Python function that returns the dictionary
-  description for simple Python data structures (lists, dictionaries, strings,
-  integers and booleans).
-
-* **9. Student to JSON**
-  * [9-student.py](./9-student.py): Python class `Student` that defines a student. Includes:
-    * Public instance attributes `first_name`, `last_name`, and `age`.
-    * Instantiation with `first_name`, `last_name`, and `age`:
-    `def __init__(self, first_name, last_name, age):`.
-    * Public method `def to_json(self):` that returns the dictionary
-    representation of a `Student` instance.
-
-* **10. Student to JSON with filter**
-  * [10-student.py](./10-student.py): Python class `Student` that defines a student. Builds on
-  [9-student.py](./9-student.py) with:
-    * Public method `def to_json(self, attrs=None):` that returns the
-    dictionary representation of a `Student` instance.
-    * If `attrs` is a list of strings, only the attributes listed are
-    represented in the dictionary.
-
-* **11. Student to disk and reload**
-  * [11-student.py](./11-student.py): Python class `Student` that defines a student. Builds on
-  [10-student.py](./10-student.py) with:
-    * Public method `def reload_from_json(self, json):` that replaces all
-    attributes of the `Student` instance using the key/value pairs listed in `json`.
-    * The method assumes `json` is a dictionary containing attributes with
-    name/value corresponding to key/value.
-
-* **12. Pascal's Triangle**
-  * [12-pascal_triangle.py](./12-pascal_triangle.py): Python function that returns a list of lists of
-  integers representing Pascal's triangle of size `n`.
-  * Assumes the size parameter `n` is an integer.
-  * If `n` is less than or equal to `0`, returns an empty list.
-
-* **13. Search and update**
-  * [100-append_after.py](./100-append_after.py): Python function that inserts a line of text to a
-  file after each line containing a specified string.
-
-* **14. Log parsing**
-  * [101-stats.py](./101-stats.py): Python script that reads lines from standard input. After
-  every 10 lines or the input of a keyboard interruption (`CTRL + C`), computes the
-  following metrics:
-    * Total file size up that point: `File size: <total size>`
-    * Status code of each read line, printed in ascending order:
-    `<status code>: <number>`
-  * Input format: `<IP Address> - [<date>] "GET /projects/260 HTTP/1.1"
-  <status code> <file size>`
+* Class constructor `def __init__(self, size, x=0, y=0, id=None):`
+  * The `width` and `height` of the `Rectangle` superclass are assigned using
+  the value of `size`.
+* Overwrite of `__str__` method to print a `Square` instance in the format
+`[Square] (<id>) <x>/<y>`.
+* Public method `def update(self, *args, **kwargs):` that updates an instance
+of a `Square` with the given attributes.
+  * `*args` must be supplied in the following order:
+    * 1st: `id`
+    * 2nd: `size`
+    * 3rd: `x`
+    * 4th: `y`
+  * `**kwargs` is expected to be a double pointer to a dictoinary of new
+  key/value attributes to update the `Square` with.
+  * `**kwargs` is skipped if `*args` exists.
+* Public method `def to_dictionary(self):` that returns the dictionary
+representation of a `Square`.
