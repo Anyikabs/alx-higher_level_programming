@@ -1,26 +1,44 @@
 #!/usr/bin/node
 
 const request = require('request');
-const url = process.argv[2];
 
-request(url, function (err, response, body) {
-  if (err) {
-    console.log(err);
-  } else if (response.statusCode === 200) {
-    const completed = {};
-    const tasks = JSON.parse(body);
-    for (const i in tasks) {
-      const task = tasks[i];
-      if (task.completed === true) {
-        if (completed[task.userId] === undefined) {
-          completed[task.userId] = 1;
-        } else {
-          completed[task.userId]++;
-        }
+const getCompletedTasksByUser = (apiUrl) => {
+  return new Promise((resolve, reject) => {
+    request(apiUrl, (error, response, body) => {
+      if (error) {
+        reject(error);
+        return;
       }
-    }
-    console.log(completed);
-  } else {
-    console.log('An error occured. Status code: ' + response.statusCode);
-  }
-});
+
+      if (response.statusCode !== 200) {
+        reject(`Request failed with status code ${response.statusCode}`);
+        return;
+      }
+
+      const tasks = JSON.parse(body);
+      const completedTasksByUser = {};
+
+      tasks.forEach((task) => {
+        if (task.completed) {
+          completedTasksByUser[task.userId] = (completedTasksByUser[task.userId] || 0) + 1;
+        }
+      });
+
+      resolve(completedTasksByUser);
+    });
+  });
+};
+
+if (process.argv.length !== 3) {
+  console.error('Usage: node 6-completed_tasks.js <API_URL>');
+} else {
+  const apiUrl = process.argv[2];
+
+  getCompletedTasksByUser(apiUrl)
+    .then((completedTasks) => {
+      console.log(completedTasks);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
